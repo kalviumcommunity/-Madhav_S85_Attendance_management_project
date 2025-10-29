@@ -1,80 +1,49 @@
 package Com.school;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main {
 
-    public static void displaySchoolDirectory(List<Person> people) {
-        System.out.println("\n--- School Directory ---");
-        if (people.isEmpty()) {
-            System.out.println("No people in the directory.");
-            return;
-        }
-        for (Person person : people) {
-            person.displayDetails();
-        }
-    }
-
     public static void main(String[] args) {
-        System.out.println("--- School System (Overloading Demo) ---");
+        System.out.println("--- School Administration System ---");
 
-        // --- Setup Services ---
         FileStorageService storageService = new FileStorageService();
-        AttendanceService attendanceService = new AttendanceService(storageService);
+        RegistrationService registrationService = new RegistrationService(storageService);
 
-        // --- Data Setup: Students and Courses ---
-        List<Student> allStudents = new ArrayList<>();
-        Student student1 = new Student("Alice Wonderland", "Grade 10");
-        Student student2 = new Student("Bob The Builder", "Grade 9");
-        Student student3 = new Student("Charlie Chaplin", "Grade 10");
-        allStudents.add(student1);
-        allStudents.add(student2);
-        allStudents.add(student3);
+        // --- Register People ---
+        Student s1 = new Student("Alice Wonderland", "Grade 10");
+        Student s2 = new Student("Bob The Builder", "Grade 9");
+        Teacher t1 = new Teacher("Dr. Strange", "Physics");
+        Teacher t2 = new Teacher("Prof. Turing", "Computer Science");
+        Staff st1 = new Staff("Mr. Clean", "Janitor");
 
-        List<Course> allCourses = new ArrayList<>();
-        Course course1 = new Course("Intro to Programming"); // ID will be C101
-        Course course2 = new Course("Data Structures");      // ID will be C102
-        allCourses.add(course1);
-        allCourses.add(course2);
+        registrationService.registerStudent(s1);
+        registrationService.registerStudent(s2);
+        registrationService.registerTeacher(t1);
+        registrationService.registerTeacher(t2);
+        registrationService.registerStaff(st1);
 
-        List<Person> schoolPeople = new ArrayList<>(allStudents);
-        Teacher teacher1 = new Teacher("Dr. Emily Carter", "Physics");
-        schoolPeople.add(teacher1);
-        displaySchoolDirectory(schoolPeople);
+        // --- Create Courses ---
+        Course c1 = new Course("Intro to Quantum Physics");
+        Course c2 = new Course("Advanced Algorithms");
+        registrationService.createCourse(c1);
+        registrationService.createCourse(c2);
 
-        System.out.println("\n\n--- Marking Attendance (Overloaded Methods) ---");
-        // 1. Mark attendance using Student and Course objects
-        attendanceService.markAttendance(student1, course1, "Present");
-        attendanceService.markAttendance(student2, course1, "Absent");
+        // --- Display Directory ---
+        System.out.println("\n--- School Directory ---");
+        for (Person p : registrationService.getAllPeople()) {
+            p.displayDetails();
+        }
 
-        // 2. Mark attendance using studentId and courseId (assuming IDs are known or looked up)
-        // Alice (ID 1) in Data Structures (ID C102)
-        attendanceService.markAttendance(student1.getId(), course2.getCourseId(), "Present", allStudents, allCourses);
-        // Charlie (ID 3) in Intro to Programming (ID C101)
-        attendanceService.markAttendance(student3.getId(), course1.getCourseId(), "Late", allStudents, allCourses); // Invalid status
+        // --- Display Courses ---
+        System.out.println("\n--- Courses ---");
+        for (Course c : registrationService.getCourses()) {
+            c.displayDetails();
+        }
 
+        // --- Save Everything ---
+        System.out.println("\n--- Saving All Data ---");
+        registrationService.saveAllRegistrations();
+        System.out.println("✅ All data saved successfully.");
 
-        System.out.println("\n\n--- Querying Attendance (Overloaded Methods) ---");
-        // 1. Display full attendance log
-        attendanceService.displayAttendanceLog();
-
-        // 2. Display attendance for a specific student (Alice)
-        attendanceService.displayAttendanceLog(student1);
-
-        // 3. Display attendance for a specific course (Intro to Programming)
-        attendanceService.displayAttendanceLog(course1);
-
-        // --- Saving Attendance Data ---
-        System.out.println("\n\n--- Saving Attendance Data ---");
-        attendanceService.saveAttendanceData(); // This will save to attendance_log.txt
-
-        // For completeness, we might want to save students and courses too if they changed
-        // storageService.saveData(allStudents, "students.txt");
-        // storageService.saveData(allCourses, "courses.txt");
-        System.out.println("Student and Course data can be saved similarly if needed.");
-
-
-        System.out.println("\nSession 8: Overloaded Commands Demonstrated Complete.");
+        System.out.println("\nPart 9 complete. Check students.txt, teachers.txt, staff.txt, and courses.txt");
     }
 }
